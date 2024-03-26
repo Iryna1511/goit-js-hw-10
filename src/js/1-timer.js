@@ -3,13 +3,16 @@ import 'flatpickr/dist/flatpickr.min.css';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
-const inputEl = document.getElementById('datetime-picker');
-const showDays = document.querySelector('span[data-days]');
-const showHours = document.querySelector('span[data-hours]');
-const showMinutes = document.querySelector('span[data-minutes]');
-const showSeconds = document.querySelector('span[data-seconds]');
-const startBtn = document.querySelector('button[data-start]');
-startBtn.disabled = true;
+const elements = {
+  inputEl: document.getElementById('datetime-picker'),
+  showDays: document.querySelector('span[data-days]'),
+  showHours: document.querySelector('span[data-hours]'),
+  showMinutes: document.querySelector('span[data-minutes]'),
+  showSeconds: document.querySelector('span[data-seconds]'),
+  startBtn: document.querySelector('button[data-start]'),
+};
+
+elements.startBtn.disabled = true;
 
 let userSelectedDate;
 let intervalTime;
@@ -28,15 +31,15 @@ const options = {
         position: 'topRight',
         message: `Please choose a date in the future`,
       });
-      startBtn.disabled = true;
+      elements.startBtn.disabled = true;
       return;
     } else {
-      startBtn.disabled = false;
+      elements.startBtn.disabled = false;
     }
   },
 };
 
-flatpickr(inputEl, options);
+flatpickr(elements.inputEl, options);
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -57,22 +60,26 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-startBtn.addEventListener('click', handleStart);
+elements.startBtn.addEventListener('click', handleStart);
 function handleStart(event) {
-  startBtn.disabled = true;
-  inputEl.disabled = true;
+  elements.startBtn.disabled = true;
+  elements.inputEl.disabled = true;
 
   intervalId = setInterval(() => {
     intervalTime = userSelectedDate - Date.now();
     const showTime = convertMs(intervalTime);
-    showDays.textContent = showTime.days.toString().padStart(2, 0);
-    showHours.textContent = showTime.hours.toString().padStart(2, 0);
-    showMinutes.textContent = showTime.minutes.toString().padStart(2, 0);
-    showSeconds.textContent = showTime.seconds.toString().padStart(2, 0);
+    elements.showDays.textContent = showTime.days.toString().padStart(2, 0);
+    elements.showHours.textContent = showTime.hours.toString().padStart(2, 0);
+    elements.showMinutes.textContent = showTime.minutes
+      .toString()
+      .padStart(2, 0);
+    elements.showSeconds.textContent = showTime.seconds
+      .toString()
+      .padStart(2, 0);
 
     if (intervalTime < 1000) {
       clearInterval(intervalId);
-      inputEl.disabled = false;
+      elements.inputEl.disabled = false;
     }
   }, 1000);
 }
